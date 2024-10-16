@@ -1,0 +1,78 @@
+Return
+      dwmc zoom
+
+f
+    warpd --hint
+
+m
+    warpd --normal
+
+v
+    emacsclient -c -e '(vterm)'
+
+alt + shift + Return
+    emacsclient -c -e '(eat)'
+
+e
+     alacritty -e emacsclient -nw
+
+M
+     alacritty -e ncmpcpp
+      
+F
+      alacritty -e emacsclient -nw -e '(dired "~/")'
+
+{h,l}
+     dwmc setmfact {-,+}0.05
+
+q
+      dwmc killclient
+
+b 
+      dwmc togglebar
+
+alt + Tab
+     rofi -show window
+
+d ; {1-9} 
+      dwmc tagex {0-9}
+
+{1-9} 
+      dwmc view {0-9}
+
+{j,k}
+      dwmc focusstack {+,-}1
+
+alt + XF86AudioNext
+    nicotine
+   
+I 
+       vesktop
+       
+w
+      qutebrowser "https://duck.ai" 
+   
+a
+      GTK_THEME=Adwaita:dark pavucontrol
+
+n ; i 
+     nicotine
+
+K
+    keepassxc
+
+C  
+      rog-control-center
+
+r ; s
+      redshift -O 3000
+
+r ; S 
+      redshift -x
+
+slash ; {1-6} 
+      emacsclient -c  {~/suckless/widow2/config.h,~/.config/sxhkd/sxhkdrc,~/.config/sxhkd/sxhkdrc_ins,~/.config/picom.conf,~/sxhkdrc.sh} 
+
+i
+    sh ~/sxhkdrc.sh -i
+

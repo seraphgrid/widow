@@ -1,0 +1,325 @@
+#!/bin/bash
+
+# Configuration
+CACHE_DIR="~/.config/spmenu/cache/"
+CACHE_FILE="$CACHE_DIR/cache"
+TERMINAL_COMMAND="alacritty -e"  # Default terminal command
+TERMINAL_PROGRAMS_FILE="$HOME/.config/spmenu/terminal_programs"  # User-editable terminal programs dictionary
+EMACS_TERMINAL=false  # Set to true to prepend terminal command to emacs
+CACHE_FILE="$CACHE_DIR/cache"
+
+# Create cache directory if it doesn't exist
+mkdir -p "$CACHE_DIR"
+mkdir -p "$HOME/.config/spmenu/"
+
+# Function to create the terminal programs dictionary with default entries
+create_terminal_programs_file() {
+    if [ ! -f "$TERMINAL_PROGRAMS_FILE" ]; then
+        cat <<EOL > "$TERMINAL_PROGRAMS_FILE"
+vim:vim
+discordo:discordo
+mc:mc
+spotify-tui:spotify-tui
+steam-tui:steam-tui
+cordless:cordless
+ncmpcpp:ncmpcpp
+mpc:mpc
+cmus:cmus
+nvim:nvim
+ranger:ranger
+xplr:xplr
+nnn:nnn
+htop:htop
+glances:glances
+neofetch:neofetch
+tmux:tmux
+screen:screen
+irssi:irssi
+weechat:weechat
+newsboat:newsboat
+mutt:mutt
+alacritty:alacritty
+fzf:fzf
+taskwarrior:task
+btop:btop
+cava:cava
+slack-term:slack-term
+tldr:tldr
+gitui:gitui
+vifm:vifm
+fff:fff
+ani-cli:ani-cli
+EOL
+        printf "Created terminal programs dictionary at %s with default entries.\n" "$TERMINAL_PROGRAMS_FILE"
+    fi
+}
+
+# Function to process executables in a directory
+process_executables() {
+    local dir="$1"
+    printf "Processing directory: %s\n" "$dir"  # Debugging output
+    # Loop through all files in the directory
+    find "$dir" -maxdepth 1 -type f -executable | while read -r executable; do
+        name=$(basename "$executable" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+        printf "Found executable: %s\n" "$name"  # Debugging output
+        
+        # Check if the name is in the terminal programs dictionary
+        if grep -q "^$name:" "$TERMINAL_PROGRAMS_FILE"; then
+            # Get the terminal variant from the dictionary
+            terminal_variant=$(grep "^$name:" "$TERMINAL_PROGRAMS_FILE" | cut -d':' -f2)
+            exec_command="$TERMINAL_COMMAND $terminal_variant"
+            printf "%s:%s\n" "$name" "$exec_command" >> "$CACHE_FILE"
+        else
+            printf "%s:%s\n" "$name" "$executable" >> "$CACHE_FILE"
+        fi
+    done
+}
+
+# Function to process Flatpak applications
+process_flatpaks() {
+    printf "Processing Flatpak applications...\n"  # Debugging output
+    local seen_names=()  # Array to track seen names
+    # Look for Flatpak binaries in the typical locations
+    for flatpak_bin in /var/lib/flatpak/exports/bin/*; do
+        if [[ -x "$flatpak_bin" ]]; then
+            # Extract the name after the last period and convert to lowercase
+            name=$(basename "$flatpak_bin" | awk -F. '{print tolower($NF)}' | tr ' ' '_')
+            printf "Found Flatpak binary: %s\n" "$name"  # Debugging output
+            
+            # Check if the name has already been seen
+            if [[ ! " ${seen_names[@]} " =~ " ${name} " ]]; then
+                seen_names+=("$name")  # Add to seen names
+                printf "%s:%s\n" "$name" "$flatpak_bin" >> "$CACHE_FILE"
+            else
+                printf "Duplicate Flatpak entry found for: %s, skipping...\n" "$name"  # Debugging output
+            fi
+        fi
+    done
+}
+
+# Function to process desktop entries
+process_desktop_entries() {
+    printf "Processing desktop entries...\n"  # Debugging output
+    for desktop_file in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do
+        if [[ -f "$desktop_file" ]]; then
+            name=$(grep -m 1 '^Name=' "$desktop_file" | cut -d'=' -f2 | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+            exec_command=$(grep -m 1 '^Exec=' "$desktop_file" | cut -d'=' -f2 | sed 's/%U//g' | sed 's/%F//g' | sed 's/%u//g' | sed 's/%f//g')  # Remove URL placeholders
+            
+            if [[ -n "$name" && -n "$exec_command" ]]; then
+                printf "Found desktop entry: %s\n" "$name"  # Debugging output
+                
+                # Handle emacs terminal behavior
+                if [[ "$name" == "emacs" ]]; then
+                    if [[ "$EMACS_TERMINAL" == true ]]; then
+                        exec_command="$TERMINAL_COMMAND emacs -nw"
+                    else
+                        exec_command=$(echo "$exec_command" | sed 's/ -nw//')  # Remove -nw if EMACS_TERMINAL is false
+                    fi
+                fi
+                
+                # Check for duplicates
+                if ! grep -q "^$name:" "$CACHE_FILE" || [[ "$exec_command" != *"$name"* ]]; then
+                    printf "%s:%s\n" "$name" "$exec_command" >> "$CACHE_FILE"
+                else
+                    printf "Duplicate entry found for: %s, skipping...\n" "$name"  # Debugging output
+                fi
+            else
+                printf "Invalid desktop entry found, skipping...\n"  # Debugging output
+            fi
+        fi
+    done
+}
+
+# Function to build the cache
+build_cache() {
+    # Create the terminal programs dictionary if it doesn't exist
+    create_terminal_programs_file
+
+    # Clear existing cache file
+    > "$CACHE_FILE"
+
+    # Find all directories in the user's PATH
+    IFS=: read -r -a paths <<< "$PATH"
+
+    # Process executables and Flatpak applications concurrently
+    for dir in "${paths[@]}"; do
+        if [ -d "$dir" ]; then
+            process_executables "$dir" &
+        else
+            printf "Directory not found: %s\n" "$dir"  # Debugging output
+        fi
+    done
+
+    # Wait for all background processes to finish
+    wait
+
+    # Process Flatpak applications
+    process_flatpaks &
+
+    # Wait for all background processes to finish
+    wait
+
+    # Process desktop entries
+    process_desktop_entries &
+
+    # Wait for all background processes to finish
+    wait
+
+    # Post-process the cache to remove duplicates and sort entries
+    remove_duplicates
+}
+
+# Function to update the terminal cache
+update_terminal_cache() {
+    printf "Updating cache based on terminal dictionary...\n"
+    
+    # Create a temporary file for the updated cache
+    local temp_file="$CACHE_FILE.tmp"
+    > "$temp_file"  # Clear the temporary file
+
+    # Read the existing cache and update it
+    while IFS=: read -r name exec_command; do
+        # Check if the name is in the terminal programs dictionary
+        if grep -q "^$(printf '%s\n' "$name" | sed 's/[.[\*^$(){}|+?]/\\&/g'):" "$TERMINAL_PROGRAMS_FILE"; then
+            # Get the terminal variant from the dictionary
+            terminal_variant=$(grep "^$(printf '%s\n' "$name" | sed 's/[.[\*^$(){}|+?]/\\&/g'):" "$TERMINAL_PROGRAMS_FILE" | cut -d':' -f2)
+            exec_command="$TERMINAL_COMMAND $terminal_variant"  # Prepend terminal command
+        fi
+        printf "%s:%s\n" "$name" "$exec_command" >> "$temp_file"
+    done < "$CACHE_FILE"
+
+    # Replace the old cache file with the updated one
+    mv "$temp_file" "$CACHE_FILE"
+}
+
+# Function to remove specific Emacs-related entries from the cache
+remove_emacs_entries() {
+    printf "Removing specific Emacs-related entries from the cache...\n"  # Debugging output
+    local temp_file="$CACHE_FILE.tmp"  # Temporary file for filtered entries
+    > "$temp_file"  # Clear the temporary file
+
+    # Read the cache and filter out specific Emacs-related entries
+    while IFS=: read -r name exec_command; do
+        # Check if the entry should be removed
+        if [[ "$name" == "ctags.emacs" || "$name" == "emacs-29.4" || "$name" == "emacs_(client)" || "$name" == "emacs_(mail,_client)" || "$name" == "pinentry-emacs" ]]; then
+            printf "Removing entry: %s\n" "$name"  # Debugging output for removed entries
+            continue  # Skip this entry
+        fi
+        
+        # Keep the remaining entries
+        printf "%s:%s\n" "$name" "$exec_command" >> "$temp_file"
+    done < "$CACHE_FILE"
+
+    # Replace the old cache file with the updated one
+    mv "$temp_file" "$CACHE_FILE"
+}
+
+# Function to remove duplicate entries and sort the cache
+remove_duplicates() {
+    printf "Removing duplicate entries and sorting...\n"  # Debugging output
+    local temp_file="$CACHE_FILE.tmp"  # Temporary file for unique entries
+    > "$temp_file"  # Clear the temporary file
+
+    # Read the cache and process each entry
+    declare -A seen
+    while IFS=: read -r name exec_command; do
+        if [[ -z "${seen[$name]}" ]]; then
+            seen[$name]="$exec_command"
+            printf "%s:%s\n" "$name" "$exec_command" >> "$temp_file"
+        fi
+    done < "$CACHE_FILE"
+
+    # Sort the entries according to the specified order
+    {
+        grep '^emacs:st -e emacs -nw' "$temp_file"  # Emacs first
+        grep '^emacs_(mail):' "$temp_file"          # Emacs mail second
+        grep '^emacsclient:' "$temp_file"           # Emacs client last
+        grep -v '^emacs:st -e emacs -nw' "$temp_file" | grep -v '^emacs_(mail):' | grep -v '^emacsclient:'  # Other entries
+    } > "$CACHE_FILE"
+
+    rm "$temp_file"  # Remove the temporary file
+}
+
+# Function to launch dmenu
+launch_dmenu() {
+    options=()
+    declare -A exec_commands
+
+    # Read the cache into an array
+    if [ -f "$CACHE_FILE" ]; then
+        while IFS=: read -r name exec_command; do
+            options+=("$name")
+            exec_commands["$name"]="$exec_command"
+        done < "$CACHE_FILE"
+    else
+        printf "Cache file not found. Please run with -c to create the cache.\n"
+        exit 1
+    fi
+
+    # Use dmenu to display the options with custom colors
+    selected=$(printf "%s\n" "${options[@]}" | dmenu -i -nb black -nf white -sb white -sf black -p "🌐")
+
+    # If an option was selected, get the corresponding Exec command
+    if [ -n "$selected" ]; then
+        exec_command=${exec_commands["$selected"]}
+
+        # Check if the selected command is in the terminal programs dictionary
+        if grep -q "^$(printf '%s\n' "$selected" | sed 's/[.[\*^$(){}|+?]/\\&/g'):" "$TERMINAL_PROGRAMS_FILE"; then
+            # If it is, run it in the terminal with any arguments
+            terminal_variant=$(grep "^$(printf '%s\n' "$selected" | sed 's/[.[\*^$(){}|+?]/\\&/g'):" "$TERMINAL_PROGRAMS_FILE" | cut -d':' -f2)
+            exec_command="$TERMINAL_COMMAND $terminal_variant"
+        fi
+
+        # Run the command with any arguments
+        eval "$exec_command"
+    fi
+}
+
+# Function to update the cache with new executables
+update_cache() {
+    printf "Updating cache...\n"
+    
+    # Build the cache first asynchronously
+    build_cache &
+
+    # Update the terminal commands for the existing cache asynchronously
+    update_terminal_cache &
+
+    # Wait for both processes to finish
+    wait
+
+    # Remove unwanted entries based on EMACS_TERMINAL asynchronously
+    remove_emacs_entries &  # Call to remove unwanted Emacs entries
+
+    # Wait for the removal to finish
+    wait
+
+    # Remove duplicates after filtering asynchronously
+    remove_duplicates &
+
+    # Wait for duplicates removal to finish
+    wait
+}
+
+# Parse command-line arguments
+while getopts "ctu" opt; do
+    case $opt in
+        c) 
+            printf "Clearing cache...\n"
+            > "$CACHE_FILE" ;;  # Clear the cache
+        t) 
+            printf "Updating cache based on terminal dictionary...\n"
+            update_terminal_cache ;;  # Update cache based on terminal dictionary
+        u) 
+            printf "Updating cache...\n"
+            update_cache ;;  # Update cache with new executables
+        *) 
+            echo "Invalid option"; exit 1 ;;
+    esac
+done
+
+# Launch dmenu if no options are provided
+if [[ "$#" -eq 0 ]]; then
+    launch_dmenu
+fi
+
