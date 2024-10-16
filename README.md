@@ -19,12 +19,11 @@ this is largely a form of radical and unconventional self-expression regarding a
 * Systemwide Vim and Insert mode functionality for navigating or launching applications.
 
 ![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
-
-## Incoming/Planned
+  
+Incoming/Planned
 
 * Auto-installation script that covers every base regarding the building and installation of applications I find quintessential to a "suckless experience". This should ease stress when hacking widow.
 * Incorporation of dwmblocks for further enhancements where necessary.
 * Linux security modules for dwmbar. Mysterious! Owo
 * A minimal but pretty looking s.lock configuration.
-
 
