@@ -3,7 +3,7 @@
 ```
 there is always another chapter. 
 ```
-![widow](https://github.com/seraphgrid/widow/blob/main/widow.png)
+![widow](https://media.discordapp.net/attachments/1247712435369021511/1295538505312632874/Screenshot_20241014_002017.png?ex=6710fe01&is=670fac81&hm=cc0c63b309bb1e1eb4157551565d22b152945c775d77e38caf4e31835bc49825&=&format=webp&quality=lossless&width=1108&height=623)
 ![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
 
 around 2022, i began working on a concept involving the abstraction of the suckless philosophy, with dwm centered at the forefront. while working on it, i began to realize i was creating nothing more than unix porn. some cutesy dwm rice i was dedicating to a lover at the time.
