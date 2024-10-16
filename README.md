@@ -1,5 +1,11 @@
 # widow
 
+```
+there is always another chapter. 
+```
+
+![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
+
 * Adherence to suckless philosophy in both aesthetics and usage.*
 * Plethora of patches provided via the usage of flexipatch for the initial stages of development.
 * Modification of dmenu to allow running applications in the terminal or launching desktop files, that does not break or repatch dmenu.
