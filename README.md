@@ -3,7 +3,7 @@
 ```
 there is always another chapter. 
 ```
-
+![widow2](https://github.com/seraphgrid/widow/blob/main/widow2.png)
 ![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
 
 * Adherence to suckless philosophy in both aesthetics and usage.*
