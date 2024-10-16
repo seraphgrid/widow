@@ -8,7 +8,7 @@ there is always another chapter.
 
 around 2022, i began working on a concept involving the abstraction of the suckless philosophy, with dwm centered at the forefront. while working on it, i began to realize i was creating nothing more than unix porn. some cutesy dwm rice i was dedicating to a lover at the time.
 
-this is largely a form of radical and unconventional self-expression regarding a tumultuous life-period as it contrasts a marriage to digital minimalism. i intend to establish and provide a sort of suckless workflow. it's still unix horny adjacent, but it won't get you past 100 upvotes.
+this is largely a form of radical and unconventional self-expression regarding a tumultuous life-period as it contrasts a marriage to digital minimalism. i intend to establish and provide a sort of suckless workflow. it's still unix-horny, but it won't get you past 100 upvotes.
 
 * Adherence to suckless philosophy in both aesthetics and usage.
 * Plethora of patches provided via the usage of flexipatch for the initial stages of development.
