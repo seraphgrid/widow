@@ -18,12 +18,13 @@ this is largely a form of radical and unconventional self-expression regarding a
   * For example, the mpd module truncates text after a certain length in a manner that keeps the top bar from feeling too crowded.  
 * Systemwide Vim and Insert mode functionality for navigating or launching applications.
 
+![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
 
-Incoming/Planned
+## Incoming/Planned
 
 * Auto-installation script that covers every base regarding the building and installation of applications I find quintessential to a "suckless experience". This should ease stress when hacking widow.
 * Incorporation of dwmblocks for further enhancements where necessary.
 * Linux security modules for dwmbar. Mysterious! Owo
 * A minimal but pretty looking s.lock configuration.
 
-![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
+
