@@ -6,6 +6,8 @@ there is always another chapter.
 ![widow](https://github.com/seraphgrid/widow/blob/main/widow.png)
 ![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
 
+around 2022, i began working on a concept involving the introduction of a hyper-suckless experience, with dwm centered at the forefront. while working on it, i began to realize i was creating nothing more than unix porn. while it was largely some cutesy dwm rice i was dedicating to a lover at the time, and time has passed since the relationship that brought forth such productivity, my love for dwm and suckless still burns.  
+
 * Adherence to suckless philosophy in both aesthetics and usage.*
 * Plethora of patches provided via the usage of flexipatch for the initial stages of development.
 * Modification of dmenu to allow running applications in the terminal or launching desktop files, that does not break or repatch dmenu.
