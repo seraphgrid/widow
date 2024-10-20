@@ -1,0 +1,217 @@
+alt + shift + o
+      dwmc zoom
+
+alt + q ; f
+      warpd --hint
+
+alt + q ; u
+      warpd --hint
+
+alt + q ; v
+      warpd --normal
+
+alt + q ; colon
+      spmenu
+
+alt + Tab 
+      rofi -show window
+
+alt + F1 
+      rofi -show drun
+
+alt + q ; o
+      alacritty 
+
+alt + q ; q 
+      dwmc killclient
+      
+alt + q ; O 
+      dwmc zoom
+
+alt + q ; B
+      dwmc togglebar
+
+alt + q ; {1-9}
+      dwmc view {0-9}
+
+alt + q ; Return
+      alacritty
+
+alt + q ; O
+      alacritty -e emacs -nw  
+
+alt + {j,k}
+      dwmc focusstack {+,-}1
+
+alt + q ; o
+      dwmc focusstack +1
+
+alt + q ; 0
+      dwmc killclient
+
+alt + bracketleft
+      dwmc killclient
+
+alt + q ; n ; m
+      alacritty -e "sudo bandwhich"
+
+alt + q ; K
+      kleopatra
+
+alt + v
+      exec /home/hexe/Applications/Chatbox-1.3.12-x86_64_310e5363068bf30d5f61cba692ff230f.AppImage --no-sandbox %U
+    	
+alt + q ; w
+	  surf https://seraphgrid.github.io	
+
+alt + q ; W
+      nitrogen
+
+shift + space ; {1-9}
+	  dwmc tagex {0-9}
+
+alt + q ; e
+      alacritty -e emacs -nw 
+   
+Print 
+      spectacle -r
+
+shift + Print
+      spectacle -f
+      
+alt + q ; t ; m 
+      alacritty -e mitmproxy
+
+alt + W ; w
+      wireshark
+
+alt + q ; E
+      exec /home/hexe/Applications/eDEX-UI-Linux-x86_64_eecd3a9dec6a5328bb312833d8ae1604.AppImage 
+
+alt + W ; W
+      alacritty -e spiderfoot -l 127.0.0.1:7777"
+
+alt + W ; m 
+      alacritty -e metasploit-framework.msfconsole
+
+alt + q ; y
+      freetube
+
+alt + q ; m
+      alacritty -e ncmpcpp 
+
+alt + q ; M
+      nicotine
+
+alt + q ; E
+      jamesdsp
+
+alt + q ; c ; r
+	  mpc repeat off
+
+alt + q ; c ; R
+	  mpc repeat on	
+
+alt + q ; c ; s
+	  mpc single off
+
+alt + q ; c ; S
+	  mpc single on	
+
+alt + q ; c ; p
+	  mpc {play,pause}	
+
+alt + q ; c ; u
+	  alacritty -e mpc update && sleep 3 
+
+alt + q ; c ; c 
+    notify-send "$(mpc current)" 
+
+alt + q ; M
+      env LD_PRELOAD=/usr/lib/spotify-adblock.so spotify --uri=%U
+    
+alt + q ; r
+ 	  goodvibes
+
+alt + q ; a
+      pavucontrol
+
+alt + q ; R
+      proxychains flatpak run de.haeckerfelix.Shortwave
+
+alt + q ; I  
+      armcord
+
+alt + q ; d
+      alacritty -e fff
+
+alt + q ; D
+     thunar 
+
+alt + q ; C 
+      rog-control-center
+
+alt + W ; d ; i
+      gnome-dictionary
+
+alt + q ; ctrl + i
+      riseup-vpn
+
+alt + q ; H
+      alacritty -e "history -c ; notify-send "cleared." ; sleep 10" 
+
+alt + q ; s
+      redshift -O 3000
+
+alt + q ; S
+      redshift -x
+
+alt + q ; x 
+      xkill
+
+alt + W ; n 
+      alacritty -e nikto -h $(xsel -b) -C all
+
+ctrl + S 
+      redshift -e 
+
+alt + q ; k
+      keepassxc
+
+ctrl + question ; 1
+       alacritty -e emacs -nw ~/suckless/widow2/config.h
+ 
+ctrl + question ; 2
+       alacritty -e emacs -nw ~/.config/sxhkd/sxhkdrc
+
+ctrl + question ; 3
+       alacritty -e emacs -nw ~/.config/sxhkd/sxhkdrc_ins
+
+ctrl + question ; 4
+      alacritty -e emacs -nw ~/.config/picom.conf	  
+
+ctrl + question ; 5
+      alacritty -e emacs -nw ~/.config/warpd/config
+      
+alt + W ; f
+      freeplane      
+
+alt + n   
+	sh ~/sxhkdrc.sh -v
+
+#Escape
+#	sh ~/sxhkdrc.sh -v
+
+ctrl + bracketleft
+    sh ~/sxhkdrc.sh -v
+
+#both insert mode and vim  need escape.
+#user needs to be able to stay in vim, in insert mode, and hit escape. 
+#the user currently has to press Escape twice, then the a key to quickly jump back into insert mode.
+#quite the paradox.
+
+alt + q ; T
+    blueman-manager
+
+alt + q ; ctrl + d
+    bitwig-studio
