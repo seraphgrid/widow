@@ -283,36 +283,30 @@ static const char *layoutmenu_cmd = "layoutmenu.sh";
 
 static const Launcher launchers[] = {
 	/* icon to display      command        */
-    { "i",               CMD("tabbed", "surf", "-e") },
+    { "i",               CMD("tabbed", "-e", "surf") },
 	{ "t",               CMD("st") },	
 };
 
 static const char *const autostart[] = {
-
-    "pkill", "-f", "dunst", NULL,
-    "pkill", "-f", "emacs", NULL, 
+  	"pkill", "-f", "dunst", NULL,
   	"pkill", "-f", "jamesdsp", NULL,
    	"pkill", "-f", "jamesdsp", NULL,
     "pkill", "-f", "riseup", NULL,
     "pkill", "-f", "riseup", NULL,
+    "spmenu", "-cu", NULL,	
     "emacs", "--daemon", NULL,
+    "systemctl", "--user", "enable", "--now", "hintsd", NULL,
     "picom", NULL,
-    "mpdscribble", NULL,
     "nitrogen", "--restore", NULL,
-    "spmenu", "-cu", NULL,	 
   	"dwmbar", NULL,
 	"bumbaclot", NULL,
-	"dunst", NULL,
 	"xban", NULL,
-    "sxhkd", NULL,	
+	"sxhkd", NULL,	
   	"pasystray", NULL, 
 	"nm-applet", NULL,
-    "firewall-applet", NULL,
-    "rog-control-center", NULL,
-    //	"vesktop", NULL,
-    //	"jamesdsp", NULL,
-	NULL
-    
+	"vesktop", NULL,
+	"jamesdsp", NULL,
+	NULL	
 };
 
 static const char *scratchpadcmd[] = {"s", "st", "-n", "spterm", NULL};
@@ -551,7 +545,7 @@ static const Key keys[] = {
 	//	{ MODKEY|ControlMask,           XK_p,          riospawnsync,           {.v = dmenucmd } },
 	{ MODKEY|ControlMask,           XK_Return,     riospawn,               {.v = termcmd } },
 	{ MODKEY,                       XK_s,          rioresize,              {0} },
-	//	{ MODKEY,                       XK_b,          togglebar,              {0} },
+	{ MODKEY,                       XK_b,          togglebar,              {0} },
 	{ MODKEY|ShiftMask,             XK_b,          toggletopbar,           {0} },
 	{ MODKEY|ControlMask,           XK_b,          tabmode,                {-1} },
 	{ MODKEY|ControlMask,           XK_space,      focusmaster,            {0} },
@@ -668,8 +662,8 @@ static const Key keys[] = {
 	//	{ MODKEY|Mod4Mask|ShiftMask,    XK_period,     tagallmon,              {.i = -1 } },
 	//	{ MODKEY|Mod4Mask|ControlMask,  XK_comma,      tagswapmon,             {.i = +1 } },
 	//	{ MODKEY|Mod4Mask|ControlMask,  XK_period,     tagswapmon,             {.i = -1 } },
-	//	{ MODKEY,                       XK_n,          togglealttag,           {0} },
-		{ MODKEY|ShiftMask,             XK_n,          nametag,                {0} },
+	{ MODKEY,                       XK_n,          togglealttag,           {0} },
+	{ MODKEY|ShiftMask,             XK_n,          nametag,                {0} },
 	/* Note that due to key limitations the below example kybindings are defined with a Mod3Mask,
 	 * which is not always readily available. Refer to the patch wiki for more details. */
 	/* Client position is limited to monitor window area */
