@@ -5,18 +5,9 @@ there is always another chapter.
 ```
 ![widow](https://github.com/seraphgrid/widow/blob/main/widow.png)
 
-
-around 2022, i began working on a concept involving the abstraction of the suckless philosophy, with dwm centered at the forefront. while working on it, i began to realize i was creating nothing more than unix porn. some cutesy dwm rice i was dedicating to a lover at the time.
-
-this is largely a form of radical and unconventional self-expression regarding a tumultuous life-period as it contrasts a marriage to digital minimalism. i intend to establish and provide a sort of suckless workflow. it's still unix-horny, but it won't get you past 100 upvotes.
-
-* Adherence to suckless philosophy in both aesthetics and usage.
-* Plethora of patches provided via the usage of flexipatch for the initial stages of development.
-* Modification of dmenu to allow running applications in the terminal or launching desktop files, that does not break or repatch dmenu.
-* Minimal prettification of dunst. 
-* Hand-crafted but minimal modifications made to various dwmbar modules.
-  * For example, the mpd module truncates text after a certain length in a manner that keeps the top bar from feeling too crowded.  
-* Systemwide Vim and Insert mode functionality for navigating or launching applications.
+widow is a modal desktop environment based on dwm, meaning that using the interface is broken down
+into various states. right now there's just two: a vim-like state and an insert mode which lets
+you interact with applications. 
 
 ![widow1](https://github.com/seraphgrid/widow/blob/main/widow1.png)
   
