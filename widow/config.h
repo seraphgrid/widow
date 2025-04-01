@@ -1,5 +1,3 @@
-/* See LICENSE file for copyright and license details. */
-
 /* Helper macros for spawning commands */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 #define CMD(...)   { .v = (const char*[]){ __VA_ARGS__, NULL } }
@@ -82,7 +80,7 @@ static char titlenormbgcolor[]           = "#ffffff"; // Normal title bar backgr
 static char titlenormbordercolor[]       = "#ffffff"; // Normal title bar border color.
 static char titlenormfloatcolor[]        = "#ffffff"; // Normal title bar color for floating windows.
 
-static char titleselfgcolor[]            = "#000000"; // Selected title bar text color (foreground).
+static char titleselfgcolor[]            = "#87ce74"; // Selected title bar text color (foreground).
 static char titleselbgcolor[]            = "#ffffff"; // Selected title bar background color.
 static char titleselbordercolor[]        = "#ffffff"; // Selected title bar border color.
 static char titleselfloatcolor[]         = "#ffffff"; // Selected title bar color for floating windows.
@@ -159,8 +157,7 @@ static const unsigned int alphas[][3] = {
 	[SchemeSel]          = { OPAQUE, baralpha, borderalpha },
 	[SchemeTitleNorm]    = { OPAQUE, baralpha, borderalpha },
 	[SchemeTitleSel]     = { OPAQUE, baralpha, borderalpha },
-	[SchemeTagsNorm]     = { OPAQUE, baralpha, borderalpha },
-	[SchemeTagsSel]      = { OPAQUE, baralpha, borderalpha },
+	[SchemeTagsNorm]     = { OPAQUE, baralpha, borderalpha }, [SchemeTagsSel]      = { OPAQUE, baralpha, borderalpha },
 	[SchemeHidNorm]      = { OPAQUE, baralpha, borderalpha },
 	[SchemeHidSel]       = { OPAQUE, baralpha, borderalpha },
 	[SchemeUrg]          = { OPAQUE, baralpha, borderalpha },
@@ -206,15 +203,15 @@ static const int color_ptrs[][ColCount] = {
 
         /*                       fg      bg      border  float */
   
-	[SchemeNorm]         = { -1,     0,      0,       7 }, // normfgcolor, normbgcolor, normbordercolor, normfloatcolork
+	[SchemeNorm]         = { -1,      0,      0,       7 }, // normfgcolor, normbgcolor, normbordercolor, normfloatcolork
 	[SchemeSel]          = { -1,     -1,     -1,     10 }, // selfgcolor,  selbgcolor,  selbordercolor,  selfloatcolor
 	[SchemeTitleNorm]    = { 6,      -1,     -1,     -1 }, // titlenormfgcolor, titlenormbgcolor, titlenormbordercolor, titlenormfloatcolor
 	[SchemeTitleSel]     = { 12,     -1,     -1,      -1 }, // titleselfgcolor, titleselbgcolor, titleselbordercolor, titleselfloatcolor
-	[SchemeTagsNorm]     = { 7,      0,      0,      -1 }, // tagsnormfgcolor, tagsnormbgcolor, tagsnormbordercolor, tagsnormfloatcolor
-	[SchemeTagsSel]      = { 0,     -1,      -1,     -1 }, // tagsselfgcolor, tagsselbgcolor,   tagsselbordercolor, tagsselfloatcolor
-	[SchemeHidNorm]      = { 5,      0,      0,      -1 }, // hidnormfgcolor, hidnormbgcolor, c000000,  c000000
+	[SchemeTagsNorm]     = { 7,       0,      0,      -1 }, // tagsnormfgcolor, tagsnormbgcolor, tagsnormbordercolor, tagsnormfloatcolor
+	[SchemeTagsSel]      = { 0,      -1,      -1,     -1 }, // tagsselfgcolor, tagsselbgcolor,   tagsselbordercolor, tagsselfloatcolor
+	[SchemeHidNorm]      = { 5,       0,      0,      -1 }, // hidnormfgcolor, hidnormbgcolor, c000000,  c000000
 	[SchemeHidSel]       = { 6,      -1,     -1,     -1 }, // urgfgcolor, urgbgcolor, urgbordercolor, urgfloatcolor
-	[SchemeUrg]          = { 9,      0,      9,      15 }, // urgfgcolor, urgbgcolor, urgbordercolor, urgfloatcolor
+	[SchemeUrg]          = { 9,       0,      9,      15 }, // urgfgcolor, urgbgcolor, urgbordercolor, urgfloatcolor
 
 };
 
@@ -288,25 +285,21 @@ static const Launcher launchers[] = {
 };
 
 static const char *const autostart[] = {
-  	"pkill", "-f", "dunst", NULL,
-  	"pkill", "-f", "jamesdsp", NULL,
+
    	"pkill", "-f", "jamesdsp", NULL,
-    "pkill", "-f", "riseup", NULL,
-    "pkill", "-f", "riseup", NULL,
     "spmenu", "-cu", NULL,	
-    "emacs", "--daemon", NULL,
-    "systemctl", "--user", "enable", "--now", "hintsd", NULL,
-    "picom", NULL,
+    "dunst", NULL,
     "nitrogen", "--restore", NULL,
   	"dwmbar", NULL,
 	"bumbaclot", NULL,
 	"xban", NULL,
-	"sxhkd", NULL,	
+    "hintsd", NULL,
+	"labyrinth", NULL,
   	"pasystray", NULL, 
 	"nm-applet", NULL,
-	"vesktop", NULL,
 	"jamesdsp", NULL,
 	NULL	
+
 };
 
 static const char *scratchpadcmd[] = {"s", "st", "-n", "spterm", NULL};
@@ -499,7 +492,7 @@ static const char *dmenucmd2[] = {
 };
 
 static const char *spmenu[] = { "spmenu", NULL };
-static const char *termcmd[]  = { "alacritty", NULL };
+static const char *termcmd[]  = { "st", NULL };
 static const char *aupup[] = { "playerctl", "--player=mpd,spotify,%any,chromium", "volume", "0.1+", NULL };
 static const char *sendgrave[] = { "xdotool", "key", "grave", NULL };
 static const char *aupdwn[] = { "playerctl", "--player=mpd,spotify,%any,chromium", "volume", "0.1-", NULL };
@@ -516,8 +509,6 @@ static const char *brightnessd[] = { "brightnessctl",  "set", "20%-", NULL };
 static const char *rofiwin[] = { "rofi", "-show", "window", NULL };
 static const char *slock[] = { "slock", NULL };
 
-static const char *printscr[] = { "spectacle", "-r", NULL };
-
 //static const char *termcmd[]  = { "st", NULL };
 
 static const char *rofi[] = { "rofi", "-show", "drun", NULL };
@@ -527,30 +518,16 @@ static const char *rofi[] = { "rofi", "-show", "drun", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key            function                argument */
-  	{ 0,                            XF86XK_AudioLowerVolume,  spawn,        {.v = voldown }},
-	{ 0,                            XF86XK_AudioRaiseVolume,  spawn,        {.v = volup }},
-	{ MODKEY,                       XF86XK_AudioRaiseVolume,  spawn,        {.v = aupup }},
-	{ MODKEY,                       XF86XK_AudioLowerVolume,  spawn,        {.v = aupdwn }},
-	{ 0,                            XF86XK_AudioPlay,         spawn,        {.v = aupplay }},
-	{ 0,                            XF86XK_AudioStop,         spawn,        {.v = austop }},
-	{ 0,                            XF86XK_AudioPrev,         spawn,        {.v = auprev }},
-	{ 0,                            XF86XK_AudioNext,         spawn,        {.v = aunext }}, 
     //	{ MODKEY,                       XK_grave,                 spawn,        {.v = sendgrave }},
-	{ 0,				XF86XK_MonBrightnessUp,   spawn,	{.v = brightnessu }},
-	{ 0,				XF86XK_MonBrightnessDown, spawn,	{.v = brightnessd }},
-	{ 0,                            XK_Print,                 spawn,        {.v = printscr }},
-	{ ControlMask|MODKEY,           XK_l,                     spawn,        {.v = slock    }},
-	{ 0,                            XK_Super_L,          spawn,                  {.v = dmenucmd2 } },
-	{ MODKEY|ShiftMask,             XK_Return,     spawn,                  {.v = termcmd } },
 	//	{ MODKEY|ControlMask,           XK_p,          riospawnsync,           {.v = dmenucmd } },
-	{ MODKEY|ControlMask,           XK_Return,     riospawn,               {.v = termcmd } },
+//	{ MODKEY|ControlMask,           XK_Return,     riospawn,               {.v = termcmd } },
 	{ MODKEY,                       XK_s,          rioresize,              {0} },
 	{ MODKEY,                       XK_b,          togglebar,              {0} },
 	{ MODKEY|ShiftMask,             XK_b,          toggletopbar,           {0} },
 	{ MODKEY|ControlMask,           XK_b,          tabmode,                {-1} },
 	{ MODKEY|ControlMask,           XK_space,      focusmaster,            {0} },
-	{ MODKEY,                       XK_j,          focusstack,             {.i = +1 } },
-	{ MODKEY,                       XK_k,          focusstack,             {.i = -1 } },
+//	{ MODKEY,                       XK_j,          focusstack,             {.i = +1 } },
+//	{ MODKEY,                       XK_k,          focusstack,             {.i = -1 } },
 	{ MODKEY,                       XK_Left,       focusdir,               {.i = 0 } }, // left
 	{ MODKEY,                       XK_Right,      focusdir,               {.i = 1 } }, // right
 	{ MODKEY,                       XK_Up,         focusdir,               {.i = 2 } }, // up
@@ -607,7 +584,7 @@ static const Key keys[] = {
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_9,          incrovgaps,             {.i = -1 } },
 	{ MODKEY|Mod4Mask,              XK_0,          togglegaps,             {0} },
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_0,          defaultgaps,            {0} },
-	{ Mod1Mask,                     XK_Tab,        spawn,            {.v = rofiwin } },
+
 	{ MODKEY|ShiftMask,             XK_Left,       shifttag,               { .i = -1 } }, // note keybinding conflict with focusadjacenttag tagtoleft
 	{ MODKEY|ShiftMask,             XK_Right,      shifttag,               { .i = +1 } }, // note keybinding conflict with focusadjacenttag tagtoright
 	{ MODKEY|ShiftMask|ControlMask, XK_Left,       shifttagclients,        { .i = -1 } },
@@ -623,7 +600,6 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {1} },
 	{ MODKEY,                       XK_u,          focusurgent,            {0} },
-	{ MODKEY,                       XK_o,          winview,                {0} },
 	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
