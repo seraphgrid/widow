@@ -370,6 +370,7 @@ static const Rule rules[] = {
 	RULE(.class = "Gimp", .tags = 1 << 4)
 	RULE(.class = "Firefox", .tags = 1 << 7)
 	RULE(.instance = "spterm", .scratchkey = 's', .isfloating = 1)
+	RULE(.instance = "tk", .scratchkey = 's', .isfloating = 1)
 };
 
 static const MonitorRule monrules[] = {
