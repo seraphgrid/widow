@@ -393,8 +393,6 @@ openvid () { \
   mpv "$FOLDER$NAME" >/dev/null 2>&1
 }
 
-#!/usr/bin/env bash
-
 cleanup() {
     rm -rf timer	
     exit 0
