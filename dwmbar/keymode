@@ -1,0 +1,19 @@
+#!/bin/bash
+
+MODE="K: "
+
+get_mode() {
+
+   kmode="$(cat "$HOME/.config/sxhkd/current_mode")"
+
+   if [[ $? -ne 0 ]]; then
+        echo "Error: Could not read the current mode file."
+        return 1
+    fi
+
+    current_mode="$MODE$kmode"
+
+    echo "$current_mode"
+}
+
+get_mode

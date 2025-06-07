@@ -1,16 +1,18 @@
 #!/bin/bash
 
 # What modules, in what order
-MODULES="ram cpuload cputemp keymode mpd volume time todo"
+MODULES="todo cmus timer volume cputemp keymode time"
+# ram is cool
+# cpuload is cool
 
 # Modules that require an active internet connection
 ONLINE_MODULES="weather internet"
 
 # Delay between showing the status bar
-DELAY="0.5"
+DELAY="1"
 
 # Where the custom modules are stored
-CUSTOM_DIR="/home/$USER/.config/dwmbar/modules/custom/"
+CUSTOM_DIR="/home/$USER/.config/dwmbar/modules/custom"
 
 # Separator between modules
 SEPARATOR=" | "

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+PREFIX_PLAY='[MPD] '
+PREFIX_PAUSE='[P] '
+PREFIX_REPEAT='R'
+PREFIX_SINGLE='$'
+
+get_mpd() {
+#   current_song="$(mpc current)"
+	current_song="$(mpc current | awk -F "- " '{print $2}')"
+    repeat_status="$(mpc status '%repeat%')"
+    single_status="$(mpc status '%single%')"  # Check for single mode
+    elapsed_time="$(mpc | grep playing | awk -F " " '{split($3, a, "/"); print a[1]}')"
+    
+    if [[ -z "$current_song" ]]; then
+        echo " "
+        exit 0
+    else
+        playpause=$(mpc | awk '/\[.*]/{split($0, a, " "); print a[1]}')
+        
+        # Determine the play/pause prefix
+        if [[ "$playpause" = "[playing]" ]]; then
+            status_prefix="$PREFIX_PLAY"
+        elif [[ "$playpause" = "[paused]" ]]; then
+            status_prefix="$PREFIX_PAUSE"
+        fi
+
+        # Truncate the song title if it's longer than 10 characters
+        if [[ ${#current_song} -gt 20 ]]; then # toyota corolla optimized
+            current_song="${current_song:0:14}::" # you just got corolla'd
+        fi
+
+        # Construct the output with the status prefix
+        output="$status_prefix$current_song"
+
+        # Add the repeat symbol if repeat is on
+        if [[ "$repeat_status" = "on" && "$single_status" = "on" ]]; then
+                output="$output [$PREFIX_REPEAT$PREFIX_SINGLE]"
+                fi
+        if [[ "$single_status" = "on" && "$repeat_status" = "off" ]]; then
+            output="$output [$PREFIX_SINGLE]"    
+            fi 
+        if [[ "$single_status" = "off" && "$repeat_status" = "on" ]]; then
+            output="$output [$PREFIX_REPEAT]"    
+            fi 
+         
+         fi
+        # Append the elapsed time
+        output="$output [$elapsed_time]"
+   
+
+    echo "$output"
+}
+
+get_mpd

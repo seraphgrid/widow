@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Gets temperature of the CPU
+# Dependencies: lm_sensors
+
+PREFIX='T: '
+FIRE=' '
+
+WARNING_LEVEL=65
+
+get_cputemp() {
+	# CPU_T=$(cat /sys/devices/platform/coretemp.0/hwmon/hwmon?/temp2_input)
+	# CPU_TEMP=$(expr $CPU_T / 1000)
+
+	CPU_TEMP="$(sensors | grep temp1 | awk 'NR==1 {gsub("\\+", " "); gsub("\\..*", " "); print $2}')"
+
+	if [ "$CPU_TEMP" -ne $WARNING_LEVEL ]; then 
+	  echo " "
+	  exit 1
+	else
+	  echo $PREFIX$CPU_TEMP
+	fi
+}
+
+get_cputemp
+
