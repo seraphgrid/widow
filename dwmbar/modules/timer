@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Function to get the current status
+sptimer() {
+    # Read the timer output
+    if [ ! -f "/home/hexe/timer" ]; then
+    	echo " "	
+	exit 0
+    else 
+	TIMER_OUTPUT=$(cat ~/timer)
+	echo "$TIMER_OUTPUT"
+    fi
+     
+}
+
+sptimer

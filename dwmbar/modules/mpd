@@ -6,7 +6,7 @@ PREFIX_REPEAT='R'
 PREFIX_SINGLE='$'
 
 get_mpd() {
-#    current_song="$(mpc current)"
+#   current_song="$(mpc current)"
 	current_song="$(mpc current | awk -F "- " '{print $2}')"
     repeat_status="$(mpc status '%repeat%')"
     single_status="$(mpc status '%single%')"  # Check for single mode
@@ -26,25 +26,28 @@ get_mpd() {
         fi
 
         # Truncate the song title if it's longer than 10 characters
-        if [[ ${#current_song} -gt 15 ]]; then # toyota corolla optimized
-            current_song="${current_song:0:4}::" # you just got corolla'd
+        if [[ ${#current_song} -gt 20 ]]; then # toyota corolla optimized
+            current_song="${current_song:0:14}::" # you just got corolla'd
         fi
 
         # Construct the output with the status prefix
         output="$status_prefix$current_song"
 
         # Add the repeat symbol if repeat is on
-        if [[ "$repeat_status" = "on" ]]; then
-            output="$output $PREFIX_REPEAT"
-            # Add "s" if single mode is on
-            if [[ "$single_status" = "on" ]]; then
-                output="$output $PREFIX_SINGLE"
-            fi
-        fi
-
+        if [[ "$repeat_status" = "on" && "$single_status" = "on" ]]; then
+                output="$output [$PREFIX_REPEAT$PREFIX_SINGLE]"
+                fi
+        if [[ "$single_status" = "on" && "$repeat_status" = "off" ]]; then
+            output="$output [$PREFIX_SINGLE]"    
+            fi 
+        if [[ "$single_status" = "off" && "$repeat_status" = "on" ]]; then
+            output="$output [$PREFIX_REPEAT]"    
+            fi 
+         
+         fi
         # Append the elapsed time
         output="$output [$elapsed_time]"
-    fi
+   
 
     echo "$output"
 }

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+MODE="K: "
+VIM="V"
+INS="INS"
+
+get_mode() {
+
+    kmode="$(cat "$HOME/.config/sxhkd/current_mode" 2>/dev/null)"
+
+   if [[ $? -ne 0 ]]; then
+        echo "Error: Could not read the current mode file."
+        return 1
+    fi
+
+    if [[ "$kmode" == "INS" ]]; then
+        current_mode="$MODE$INS"
+    else
+        current_mode="$MODE$VIM"
+    fi
+
+    echo "$current_mode"
+}
+
+get_mode

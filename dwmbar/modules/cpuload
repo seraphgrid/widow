@@ -2,7 +2,7 @@
 
 # Prints out the CPU load percentage
 
-PREFIX=' '
+PREFIX='C:'
 
 get_load()
 {

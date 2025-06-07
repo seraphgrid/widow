@@ -5,11 +5,11 @@
 
 TASKS_DIR="/home/$USER/tasks/"
 TASKS_NAME="tasks"
-PREFIX=': '
+PREFIX='t: '
 
 get_todo()
 {
-echo "$PREFIX$(t --task-dir $TASKS_DIR --list $TASKS_NAME | wc -l)"
+echo "[$(t --task-dir $TASKS_DIR --list $TASKS_NAME | wc -l)]"
 }
 
 get_todo
