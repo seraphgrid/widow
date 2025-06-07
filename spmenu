@@ -1,8 +1,9 @@
 #!/bin/bash
+
 # Configuration
-CACHE_DIR="~/.config/spmenu/cache/"
+CACHE_DIR="~/.config/spmenu/cache"
 CACHE_FILE="$CACHE_DIR/cache"
-TERMINAL_COMMAND="alacritty -e"  # Default terminal command
+TERMINAL_COMMAND="alacritty -e"  # Default terminal commandAdd commentMore actions
 TERMINAL_PROGRAMS_FILE="$HOME/.config/spmenu/terminal_programs"  # User-editable terminal programs dictionary
 EMACS_TERMINAL=false  # Set to true to prepend terminal command to emacs
 CACHE_FILE="$CACHE_DIR/cache"
@@ -38,7 +39,6 @@ irssi:irssi
 bleachbit:sudo bleachbit
 weechat:weechat
 newsboat:newsboat
-bluetuith:bluetuith
 mutt:mutt
 alacritty:alacritty
 fzf:fzf
@@ -47,7 +47,6 @@ btop:sudo btop
 cava:cava
 slack-term:slack-term
 tldr:tldr
-pulsemixer:pulsemixer
 pacman:sudo pacman -Syu
 gitui:gitui
 vifm:vifm
@@ -134,13 +133,13 @@ process_desktop_entries() {
     done
 }
 
-# Function to build the cache
 build_cache() {
-    # Create the terminal programs dictionary if it doesn't exist
+    echo "Building cache..."  # Debugging output
     create_terminal_programs_file
 
     # Clear existing cache file
     > "$CACHE_FILE"
+    echo "Cache file cleared."  # Debugging output
 
     # Find all directories in the user's PATH
     IFS=: read -r -a paths <<< "$PATH"
@@ -148,26 +147,26 @@ build_cache() {
     # Process executables and Flatpak applications concurrently
     for dir in "${paths[@]}"; do
         if [ -d "$dir" ]; then
+            echo "Processing directory: $dir"  # Debugging output
             process_executables "$dir" &
         else
-            printf "Directory not found: %s\n" "$dir"  # Debugging output
+            echo "Directory not found: $dir"  # Debugging output
         fi
     done
 
     # Wait for all background processes to finish
     wait
+    echo "Finished processing executables."  # Debugging output
 
     # Process Flatpak applications
     process_flatpaks &
-
-    # Wait for all background processes to finish
     wait
+    echo "Finished processing Flatpak applications."  # Debugging output
 
     # Process desktop entries
     process_desktop_entries &
-
-    # Wait for all background processes to finish
     wait
+    echo "Finished processing desktop entries."  # Debugging output
 
     # Post-process the cache to remove duplicates and sort entries
     remove_duplicates
@@ -311,7 +310,7 @@ download(){
 	VICOL="~/Videos/rnd/"
 	MUCOL="~/Music/collection/rnd/"
 	
-	options="AU\nVI"
+	options="VI\nAU"
 	
 	choice=$(echo -e "$options" | dmenu -i -p "DOWN:" -nb black -nf white -sb white -sf black)
 	
@@ -334,7 +333,7 @@ download(){
 		;; 
 	
 	   VI)
-		$TERMINAL -e yt-dlp -f bestvideo+bestaudio --merge-output-format mkv --postprocessor-args '-c:v libx264 -crf 18 -preset slow -c:a copy' -o "$VICOL%(title)s.%(ext)s" "$URL"
+		$TERMINAL -e yt-dlp --merge-output-format mp4 -o "$VICOL%(title)s.%(ext)s" "$URL"
 		;;
 	
 	    *)
@@ -345,21 +344,99 @@ download(){
 
 }
 
+define() {
+	
+	# credit to bread on penguins thanks cutie
+
+	word=${1:-$(xclip -o -selection primary 2>/dev/null || wl-paste 2>/dev/null)}
+	
+	# Check for empty word or special characters
+	[[ -z "$word" || "$word" =~ [\/] ]] && notify-send -h string:bgcolor:#bf616a -t 3000 "Invalid input." && exit 0
+	
+	query=$(curl -s --connect-timeout 5 --max-time 10 "https://api.dictionaryapi.dev/api/v2/entries/en_US/$word")
+	
+	# Check for connection error (curl exit status stored in $?)
+	[ $? -ne 0 ] && notify-send -h string:bgcolor:#bf616a -t 3000 "Connection error." && exit 1
+	
+	# Check for invalid word response
+	[[ "$query" == *"No Definitions Found"* ]] && notify-send -h string:bgcolor:#bf616a -t 3000 "Invalid word." && exit 0
+	
+	# Show only first 3 definitions
+	def=$(echo "$query" | jq -r '[.[].meanings[] | {pos: .partOfSpeech, def: .definitions[].definition}] | .[:3].[] | "\n\(.pos). \(.def)"')
+	
+	# Requires a notification daemon to be installed
+	notify-send -t 60000 "$word -" "$def"
+	
+	
+	### MORE OPTIONS :)
+	
+	# Show first definition for each part of speech (thanks @morgengabe1 on youtube)
+	# def=$(echo "$query" | jq -r '.[0].meanings[] | "\(.partOfSpeech): \(.definitions[0].definition)\n"')
+	
+	# Show all definitions
+	# def=$(echo "$query" | jq -r '.[].meanings[] | "\n\(.partOfSpeech). \(.definitions[].definition)"')
+	
+	# Regex + grep for just definition, if anyone prefers that to jq
+	# def=$(grep -Po '"definition":"\K(.*?)(?=")' <<< "$query")
+	
+	# bold=$(tput bold) # Print text bold with echo, for visual clarity
+	# normal=$(tput sgr0) # Reset text to normal
+	# echo "${bold}Definition of $word"
+	# echo "${normal}$def"
+}
+
+openvid () { \
+
+  # credit 2 bread on penguin once again thanks friend
+  FOLDER=$HOME/Videos/rnd
+  NAME="$(echo "$(command ls $FOLDER)" | dmenu -l 15)" || exit 0
+  mpv "$FOLDER$NAME" >/dev/null 2>&1
+}
+
+#!/usr/bin/env bash
+
+cleanup() {
+    rm -rf timer	
+    exit 0
+}
+
+actualtimer() {
+    trap cleanup SIGHUP SIGINT SIGQUIT SIGABRT SIGTERM # 1 2 3 6 15
+    while [ $TOTAL_SECONDS -gt 0 ]; do
+        MIN=$(printf "%02d" $((TOTAL_SECONDS / 60)))
+        SEC=$(printf "%02d" $((TOTAL_SECONDS % 60)))
+        echo "$MIN:$SEC" > timer  # Update the timer display
+        sleep 1
+        ((TOTAL_SECONDS--))
+    done
+
+    notify-send "Timer ended, take a break"
+    cleanup
+}
+
+sptimer() {
+    MINUTES="$(echo "" | dmenu -p "Minutes: " )"
+    TOTAL_SECONDS=$((MINUTES * 60))
+    actualtimer
+}
+
+
+
+
 # Parse command-line arguments
-while getopts "ctud" opt; do
+while getopts "ctudDvmME" opt; do
     case $opt in
-        c) 
-            printf "Clearing cache...\n"
-            > "$CACHE_FILE" ;;  # Clear the cache
-        t) 
-            printf "Updating cache based on terminal dictionary...\n"
-            update_terminal_cache ;;  # Update cache based on terminal dictionary
-        u) 
-            printf "Updating cache...\n"
-            update_cache ;;  # Update cache with new executables
-	d)
-	   download
-           ;;
+        c) printf "Clearing cache...\n" 
+	   > "$CACHE_FILE" ;;  
+        t) printf "Updating cache based on terminal dictionary...\n" update_terminal_cache ;;  
+        u) printf "Updating cache...\n" update_cache ;;  
+	d) download ;;
+	D) define ;;
+	v) openvid ;;
+	m) sptimer ;;
+	M) notify-send "Killing timer..." && kill -TERM $(pgrep -f "$0") ;;
+	E) $EDITOR $HOME/.local/bin/spmenu ;;
+	
 	
         *) 
             echo "Invalid option"; exit 1 ;;
@@ -370,4 +447,3 @@ done
 if [[ "$#" -eq 0 ]]; then
     launch_dmenu
 fi
-
