@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Configuration
 CACHE_DIR="~/.config/spmenu/cache/"
 CACHE_FILE="$CACHE_DIR/cache"
@@ -39,6 +38,7 @@ irssi:irssi
 bleachbit:sudo bleachbit
 weechat:weechat
 newsboat:newsboat
+bluetuith:bluetuith
 mutt:mutt
 alacritty:alacritty
 fzf:fzf
@@ -47,6 +47,7 @@ btop:sudo btop
 cava:cava
 slack-term:slack-term
 tldr:tldr
+pulsemixer:pulsemixer
 pacman:sudo pacman -Syu
 gitui:gitui
 vifm:vifm
@@ -304,8 +305,48 @@ update_cache() {
     wait
 }
 
+download(){
+
+	TERMINAL="alacritty"
+	VICOL="~/Videos/rnd/"
+	MUCOL="~/Music/collection/rnd/"
+	
+	options="AU\nVI"
+	
+	choice=$(echo -e "$options" | dmenu -i -p "DOWN:" -nb black -nf white -sb white -sf black)
+	
+	URL="$(xsel -b)"
+	
+	if [ -z "$URL" ]; then
+	    echo "No URL found in clipboard."
+	    exit 1
+	fi
+	
+	case "$choice" in
+	   AU)
+	
+	          $TERMINAL -e yt-dlp -x "$URL" \
+	          --audio-format m4a \
+	          --audio-quality 0 --prefer-ffmpeg \
+	          --add-metadata --embed-thumbnail \
+	          -o "$MUCOL%(title)s.%(ext)s"
+	
+		;; 
+	
+	   VI)
+		$TERMINAL -e yt-dlp -f bestvideo+bestaudio --merge-output-format mkv --postprocessor-args '-c:v libx264 -crf 18 -preset slow -c:a copy' -o "$VICOL%(title)s.%(ext)s" "$URL"
+		;;
+	
+	    *)
+	        echo "Invalid selection"
+	        ;;
+	esac
+
+
+}
+
 # Parse command-line arguments
-while getopts "ctu" opt; do
+while getopts "ctud" opt; do
     case $opt in
         c) 
             printf "Clearing cache...\n"
@@ -316,6 +357,10 @@ while getopts "ctu" opt; do
         u) 
             printf "Updating cache...\n"
             update_cache ;;  # Update cache with new executables
+	d)
+	   download
+           ;;
+	
         *) 
             echo "Invalid option"; exit 1 ;;
     esac
